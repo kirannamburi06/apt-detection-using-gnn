@@ -1,0 +1,36 @@
+<component name="InspectionProjectProfileManager">
+  <profile version="1.0">
+    <option name="myName" value="Project Default" />
+    <inspection_tool class="PyPackageRequirementsInspection" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="ignoredPackages">
+        <list>
+          <option value="langchain" />
+          <option value="python-dotenv" />
+          <option value="ipykernel" />
+          <option value="langchain-community" />
+          <option value="pypdf" />
+          <option value="bs4" />
+          <option value="arxiv" />
+          <option value="pymupdf" />
+          <option value="wikipedia" />
+          <option value="langchain-text-splitters" />
+          <option value="langchain-openai" />
+          <option value="chromadb" />
+          <option value="faiss-cpu" />
+          <option value="duckdb" />
+          <option value="pandas" />
+          <option value="openai" />
+          <option value="langchain-groq" />
+          <option value="mysql-connector-python" />
+          <option value="validators" />
+          <option value="unstructured" />
+          <option value="pytube" />
+          <option value="numexpr" />
+          <option value="streamlit" />
+          <option value="aett-mongodb" />
+          <option value="langchain-ollama" />
+        </list>
+      </option>
+    </inspection_tool>
+  </profile>
+</component>
