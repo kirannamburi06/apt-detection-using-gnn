@@ -69,39 +69,36 @@ def train_model(model, train_data, epochs=50, lr=0.001):
         correct = 0
         total = 0
 
+        # Shuffle training data
         random.shuffle(train_data)
 
         for sample in train_data:
             graphs = sample['graphs']
+            label = torch.tensor(sample['label'], dtype=torch.long)
 
-            # Target must be shape [batch_size]
-            label = torch.tensor([sample['label']], dtype=torch.long)
-
+            # Forward pass (output is now [1, 2])
             optimizer.zero_grad()
+            output = model(graphs)
 
-            # Forward pass
-            output = model(graphs)   # shape: [1, 2]
+            # Loss
+            loss = criterion(output, label.unsqueeze(0))
 
-            # Compute loss directly (NO unsqueeze!)
-            loss = criterion(output, label)
-
-            # Backprop
+            # Backward
             loss.backward()
             optimizer.step()
 
+            # Statistics
             total_loss += loss.item()
-
-            # Prediction
-            pred = torch.argmax(output, dim=1)  # shape: [1]
-            correct += (pred == label).sum().item()
+            pred = torch.argmax(output, dim=1).item()
+            correct += (pred == label.item())
             total += 1
 
+        # Epoch stats
         avg_loss = total_loss / total
         accuracy = 100 * correct / total
 
         if (epoch + 1) % 10 == 0:
-            print(f"Epoch {epoch + 1:3d}/{epochs} | "
-                  f"Loss: {avg_loss:.4f} | Acc: {accuracy:.2f}%")
+            print(f"Epoch {epoch + 1:3d}/{epochs} | Loss: {avg_loss:.4f} | Acc: {accuracy:.2f}%")
 
     print("=" * 60)
     print("✅ Training complete!")
@@ -114,23 +111,25 @@ def evaluate_model(model, test_data):
     model.eval()
     correct = 0
     total = 0
+
     predictions = []
 
     with torch.no_grad():
         for sample in test_data:
             graphs = sample['graphs']
-            label = torch.tensor([sample['label']], dtype=torch.long)
+            label = sample['label']
 
-            output = model(graphs)  # shape [1, 2]
-            pred = torch.argmax(output, dim=1)
+            # Predict (output is [1, 2])
+            output = model(graphs)
+            pred = torch.argmax(output, dim=1).item()
 
-            correct += (pred == label).sum().item()
+            correct += (pred == label)
             total += 1
 
             predictions.append({
-                'true_label': label.item(),
-                'predicted': pred.item(),
-                'correct': pred.item() == label.item()
+                'true_label': label,
+                'predicted': pred,
+                'correct': pred == label
             })
 
     accuracy = 100 * correct / total
@@ -138,6 +137,7 @@ def evaluate_model(model, test_data):
     print(f"\nTest Accuracy: {accuracy:.2f}%")
     print(f"Correct: {correct}/{total}")
 
+    # Show some predictions
     print("\nSample predictions:")
     for i, pred in enumerate(predictions[:5]):
         status = "✅" if pred['correct'] else "❌"
